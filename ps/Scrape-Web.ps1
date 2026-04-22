@@ -1,6 +1,11 @@
 ##
-# Scrape-Web.ps1
-# A simple PowerShell script to recursively scrape images from a given URL and save them to a specified directory.
+# Scrape-Web.ps1 - A PowerShell script to recursively scrape images from a given URL and save them to a specified directory.
+# 
+# Parameters:
+# -Uri: The base URL to start scraping from (required)
+# -Dest: The destination directory to save the files (optional, default: "./scraped-images")
+# -FileTypes: A regex pattern of file extensions to match for downloading (optional, default: 'jpg|jpeg|png|gif|webp')
+# 
 # @author Harald Hauknes <harald at hauknes dot org>
 ##
 param(
@@ -78,11 +83,11 @@ function Get-ImagesRecursive {
 
       # DIRECTORY FIRST
       if ($href.EndsWith('/')) {
+        # TODO: Parent directory links like 'this_is_the_problem/my_path/' are not ignored properly
         Write-Debug "This is a directory, recursing into directory: $resolvedUrl"
         Write-Host "Found directory: $href, recursing into it.."
         Get-ImagesRecursive -CurrentUrl $resolvedUrl
         Write-Host "Leaving directory: $href, going back to parent.."
-        #Write-Debug "Skipping for now, to avoid infinite recursion (this is a known issue that needs to be fixed).."
         continue
       }
 
