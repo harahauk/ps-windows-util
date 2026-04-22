@@ -1,5 +1,5 @@
 ##
-# Scrape-Web.ps1 - A PowerShell script to recursively scrape images from a given URL and save them to a specified directory.
+# Scrape-Web.ps1 - A PowerShell script to recursively scrape files from a given URL and save them to a specified directory.
 # 
 # Parameters:
 # -Uri: The base URL to start scraping from (required)
