@@ -1,3 +1,8 @@
+##
+# Scrape-Web.ps1
+# A simple PowerShell script to recursively scrape images from a given URL and save them to a specified directory.
+# @author Harald Hauknes <harald at hauknes dot org>
+##
 param(
     [Parameter(Mandatory = $true, Position = 0)]
     [string]$Uri,
@@ -23,11 +28,9 @@ function Get-ImagesRecursive {
     param (
         [string]$CurrentUrl
     )
-
     if ($visited.Contains($CurrentUrl)) {
         return
     }
-
     $visited.Add($CurrentUrl) | Out-Null
     Write-Debug "Visited: $visited"
 
@@ -40,9 +43,8 @@ function Get-ImagesRecursive {
         return
     }
 
-    # Debug
-    #Write-Host "$response"
-    Write-Debug "Links found: $($response.Links.Count). Recursing.."
+    #Write-Debug "$response"
+    Write-Debug "Count of links found: $($response.Links.Count). Looping through them.."
     Write-Debug "All links: $($response.Links | ForEach-Object { $_.href })"
     $count = 1
     foreach ($link in $response.Links) {
@@ -74,17 +76,18 @@ function Get-ImagesRecursive {
       Write-Debug "Discovered: $resolvedUrl"
       Write-Debug "Value of href: $href"
 
-      # DIRECTORY FIRST (this is the key fix)
+      # DIRECTORY FIRST
       if ($href.EndsWith('/')) {
         Write-Debug "This is a directory, recursing into directory: $resolvedUrl"
+        Write-Host "Found directory: $href, recursing into it.."
         Get-ImagesRecursive -CurrentUrl $resolvedUrl
+        Write-Host "Leaving directory: $href, going back to parent.."
         #Write-Debug "Skipping for now, to avoid infinite recursion (this is a known issue that needs to be fixed).."
         continue
       }
 
       # Match file types
-      #if ($resolvedUrl -match "\.($FileTypes)$")
-      
+      #if ($resolvedUrl -match "\.($FileTypes)$")      
       #if ($resolvedUrl -imatch "\.($FileTypes)(\?|$)")
       #$fileName = Split-Path $resolvedUrl -Leaf
       $fileName = $href
@@ -102,8 +105,10 @@ function Get-ImagesRecursive {
                 catch {
                     Write-Warning "Failed to download $fullURL"
                 }
-            }
+        } else {
+          Write-Host "'$outputPath' already exists, skipping download."
         }
+      }
     } # End of foreach loop
 }
 
